@@ -277,11 +277,18 @@
         <button class="tool-btn" type="button" data-action="recenter" data-i18n-aria="recenter"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
       </div>
       <div class="face-strip" id="face-strip" aria-live="off"></div>
-      <div class="region-pill" id="region-pill">
-        <i class="region-pill__dot"></i>
-        <span class="region-pill__state" id="region-state"></span>
-        <span class="region-pill__name" id="region-name"></span>
-        <span class="region-pill__pct" id="region-pct"></span>
+      <div class="step-row">
+        <div class="region-pill" id="region-pill">
+          <i class="region-pill__dot"></i>
+          <span class="region-pill__state" id="region-state"></span>
+          <span class="region-pill__name" id="region-name"></span>
+          <span class="region-pill__pct" id="region-pct"></span>
+        </div>
+        <!-- Moves on to the next step at any progress (FINISH SCAN ends the whole session). -->
+        <button class="btn-next" id="btn-next" type="button">
+          <span id="btn-next-label"></span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
       <p class="instruction" id="instruction" aria-live="polite"></p>
     </footer>
@@ -318,6 +325,9 @@
         <p class="result-model__title" data-i18n="resultModelTitle"></p>
         <p class="result-model__empty" id="result-model-empty" data-i18n="resultModelEmpty"></p>
       </div>
+
+      <!-- What each step actually captured (skipped steps are listed as not performed). -->
+      <ul class="result-steps" id="result-steps" data-i18n-aria="stepsTitle"></ul>
 
       <dl class="stats" id="stats">
         <div class="stat stat--main"><dt class="stat__label"></dt><dd class="stat__value"></dd></div>

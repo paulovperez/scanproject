@@ -1,6 +1,7 @@
 /*
  * Intraoral Scanner Challenge — game flow, patient setup, input, timer, scan quality and personal best.
  * Steps of a round: upper arch → lower arch → right bite → left bite, all inside one time limit.
+ * NEXT moves on at any progress; FINISH SCAN ends the session; both keep what was captured.
  * Every crown has five independent surfaces; the scanner only captures what it can see
  * (visibility rules live in capture.js).
  */
@@ -113,6 +114,8 @@
     modeRotate: $('mode-rotate'),
     heat: $('btn-heat'),
     nextView: $('btn-next-view'),
+    nextStep: $('btn-next'),
+    nextStepLabel: $('btn-next-label'),
     quit: $('btn-quit'),
     toast: $('toast'),
 
@@ -127,6 +130,7 @@
     again: $('btn-again'),
     continueBtn: $('btn-continue'),
     stats: $('stats'),
+    resultSteps: $('result-steps'),
     resultModel: $('result-model'),
     resultModelEmpty: $('result-model-empty'),
     change: $('btn-change'),
@@ -945,7 +949,8 @@
 
   function stageComplete(t) {
     const stage = currentStage();
-    if (game.stageIndex === game.stages.length - 1) { endRound('win', t); return; }
+    // Last step done: a win only if no earlier step was left incomplete (NEXT skips are partial).
+    if (game.stageIndex === game.stages.length - 1) { endRound(game.captured >= game.total ? 'win' : 'finish', t); return; }
     const next = game.stages[game.stageIndex + 1];
     game.phase = 'transition';
     input.lastTip = null;
@@ -965,9 +970,36 @@
     renderer.setView(stageView(next), false);
     setResultLinked(true); // the next step starts with both panels on the same view
     screens.game.classList.toggle('is-bite', !isArch(next));
-    game.phase = 'running';
+    // Skipped before the first touch: the clock still starts on the first touch of the new step.
+    game.phase = game.clockStarted ? 'running' : 'ready';
     input.lastTip = null;
     ui.banner.classList.remove('is-visible');
+  }
+
+  /*
+   * NEXT: leaves the current step at any progress and moves to the next one (upper → lower →
+   * right bite → left bite → results). Everything captured stays as it is: nothing is filled in,
+   * and skipped surfaces keep counting as not scanned. FINISH SCAN instead ends the whole session.
+   */
+  function nextStep() {
+    if (game.phase !== 'ready' && !isLive()) return;
+    if (game.stageIndex >= game.stages.length - 1) { endRound('finish'); return; }
+    clearTimeout(game.switchTimer);
+    game.switchTimer = 0;
+    const skipped = currentStage().captured < currentStage().total;
+    releasePointer();
+    stageSurface.reset();
+    advanceStage();
+    if (skipped) showToast(S.stepAdvanced);
+    updateHud();
+  }
+
+  // Per-step outcome for the results screen, from what was really captured.
+  function stepSummary(stage) {
+    if (!stage.total) return { text: '—', cls: '' }; // nothing to scan in this step (teeth removed)
+    if (stage.total && stage.captured >= stage.total) return { text: S.stepComplete, cls: 'is-done' };
+    if (!stage.captured) return { text: S.stepNotDone, cls: 'is-skipped' };
+    return { text: Math.min(99, Math.floor((100 * stage.captured) / stage.total)) + '%', cls: 'is-partial' };
   }
 
   // Scan quality of the surfaces actually captured (a partial scan is judged on what it has;
@@ -983,7 +1015,7 @@
   }
 
   /*
-   * Ends the round. kind: 'win' (every required surface and both bites, inside the limit),
+   * Ends the round. kind: 'win' (every required surface of every step, inside the limit),
    * 'timeout' (limit reached) or 'finish' (FINISH SCAN, any progress). Everything captured is
    * kept; only an uninterrupted win can set the personal best.
    */
@@ -1011,8 +1043,9 @@
       best = game.endMs;
       isNewBest = true;
     }
-    // A finished (partial) scan can be resumed; a timed-out one cannot get extra time.
-    game.canContinue = kind === 'finish';
+    // A finished (partial) scan can be resumed in the step where it stopped; a timed-out one cannot
+    // get extra time, and steps left behind with NEXT are not reopened.
+    game.canContinue = kind === 'finish' && currentStage().captured < currentStage().total;
 
     updateHud();
     draw(performance.now());
@@ -1362,7 +1395,14 @@
       const done = st.captured >= st.total;
       chip.classList.toggle('is-done', done);
       chip.classList.toggle('is-active', !done && st === stage);
+      chip.classList.toggle('is-skipped', !done && game.stages.indexOf(st) < game.stageIndex);
     });
+
+    const last = game.stageIndex >= game.stages.length - 1;
+    setText(ui.nextStepLabel, last ? S.nextResults : S.nextStep);
+    const nextAria = last ? S.resultsAria : fmt(S.nextAria, { next: S.stageNext[game.stages[game.stageIndex + 1].key] });
+    if (ui.nextStep.getAttribute('aria-label') !== nextAria) ui.nextStep.setAttribute('aria-label', nextAria);
+    ui.nextStep.disabled = game.phase === 'ended';
 
     renderFaceStrip(stage);
 
@@ -1804,6 +1844,7 @@
   ui.again.addEventListener('click', startGame);
   ui.continueBtn.addEventListener('click', continueScan);
   ui.finish.addEventListener('click', finishScan);
+  ui.nextStep.addEventListener('click', nextStep);
   ui.change.addEventListener('click', () => { game.phase = 'idle'; openSetup(); });
   ui.home.addEventListener('click', () => { game.phase = 'idle'; showScreen('home'); });
   ui.quit.addEventListener('click', () => {
@@ -1870,6 +1911,18 @@
       ui.statValues[i].textContent = s[1];
     });
     ui.stats.classList.toggle('stats--4', stats.length === 4);
+    ui.resultSteps.textContent = '';
+    game.stages.forEach((st) => {
+      const s = stepSummary(st);
+      const li = document.createElement('li');
+      li.className = 'result-step ' + s.cls;
+      const name = document.createElement('span');
+      name.textContent = S.stageLabels[st.key];
+      const value = document.createElement('strong');
+      value.textContent = s.text;
+      li.append(name, value);
+      ui.resultSteps.appendChild(li);
+    });
     ui.newBest.classList.toggle('is-visible', isNewBest);
     ui.continueBtn.hidden = !game.canContinue;
     ui.again.textContent = win ? S.playAgain : partial ? S.newScan : S.tryAgain;

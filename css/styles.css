@@ -1069,7 +1069,64 @@ svg { display: block; }
   border-color: var(--orange);
   background: var(--orange) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4L18 8' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 10px no-repeat;
 }
+.bite-chip.is-skipped { text-decoration: line-through; color: var(--gray-400); }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* NEXT: leave the current step at any progress (beside the "next region" pill). */
+.step-row { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 720px; }
+.step-row .region-pill { min-width: 0; flex: 0 1 auto; }
+.btn-next {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 36px;
+  padding: 0 8px 0 14px;
+  border-radius: 999px;
+  color: var(--white);
+  background: var(--orange);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.btn-next svg { width: 18px; height: 18px; }
+.btn-next:active { background: var(--orange-strong); }
+.btn-next:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.btn-next:disabled { opacity: 0.5; }
+
+/* Results: what each step captured. */
+.result-steps {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  width: 100%;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.result-step {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--gray-500);
+}
+.result-step strong { font-size: 12px; color: var(--ink); letter-spacing: 0; white-space: nowrap; }
+.result-step.is-done strong { color: var(--orange-ink); }
+.result-step.is-skipped strong { color: var(--gray-400); font-weight: 600; }
+.result-steps + .stats { margin-top: 10px; }
+@media (max-width: 420px) {
+  .btn-next { height: 34px; padding: 0 6px 0 11px; font-size: 11px; }
+  .step-row .region-pill { padding: 7px 10px; gap: 6px; font-size: 12px; }
+  .step-row .region-pill__state { display: none; }
+}
 
 /* ---------- Patient setup ---------- */
 
