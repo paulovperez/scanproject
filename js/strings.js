@@ -7,16 +7,12 @@
   'use strict';
 
   const en = {
-    pageTitle: 'Intraoral Scanner Challenge',
+    pageTitle: 'Scan Experience',
     brand: 'DIGITAL SCAN EXPERIENCE',
     language: 'Language',
 
-    titleLine1: 'INTRAORAL',
-    titleLine2: 'SCANNER',
-    titleLine3: 'CHALLENGE',
     subtitle: 'How fast can you scan?',
     start: 'START SCANNING',
-    limitHint: 'Complete the scan in {seconds} seconds',
     personalBest: 'Personal best',
     noBest: 'No record yet — set the first one',
     homeFooter: 'Simulation only · No camera · No personal data collected',
@@ -202,16 +198,12 @@
   };
 
   const ptBR = {
-    pageTitle: 'Desafio do Scanner Intraoral',
+    pageTitle: 'Scan Experience',
     brand: 'EXPERIÊNCIA DE SCAN DIGITAL',
     language: 'Idioma',
 
-    titleLine1: 'DESAFIO DO',
-    titleLine2: 'SCANNER',
-    titleLine3: 'INTRAORAL',
     subtitle: 'Quão rápido você consegue escanear?',
     start: 'COMEÇAR O SCAN',
-    limitHint: 'Complete o escaneamento em {seconds} segundos',
     personalBest: 'Recorde pessoal',
     noBest: 'Ainda sem recorde — faça o primeiro',
     homeFooter: 'Apenas simulação · Sem câmera · Nenhum dado pessoal coletado',
@@ -392,16 +384,12 @@
   };
 
   const fr = {
-    pageTitle: 'Défi du scanner intra-oral',
+    pageTitle: 'Scan Experience',
     brand: 'EXPÉRIENCE DE SCAN 3D',
     language: 'Langue',
 
-    titleLine1: 'DÉFI DU',
-    titleLine2: 'SCANNER',
-    titleLine3: 'INTRA-ORAL',
     subtitle: 'À quelle vitesse scannez-vous ?',
     start: 'COMMENCER LE SCAN',
-    limitHint: 'Terminez le scan en {seconds} secondes',
     personalBest: 'Record personnel',
     noBest: 'Pas encore de record — établissez le premier',
     homeFooter: 'Simulation uniquement · Pas de caméra · Aucune donnée personnelle collectée',
@@ -582,16 +570,12 @@
   };
 
   const es = {
-    pageTitle: 'Desafío del escáner intraoral',
+    pageTitle: 'Scan Experience',
     brand: 'EXPERIENCIA DE ESCANEO',
     language: 'Idioma',
 
-    titleLine1: 'DESAFÍO DEL',
-    titleLine2: 'ESCÁNER',
-    titleLine3: 'INTRAORAL',
     subtitle: '¿Qué tan rápido puedes escanear?',
     start: 'EMPEZAR EL ESCANEO',
-    limitHint: 'Completa el escaneo en {seconds} segundos',
     personalBest: 'Récord personal',
     noBest: 'Aún no hay récord — marca el primero',
     homeFooter: 'Solo simulación · Sin cámara · No se recopilan datos personales',

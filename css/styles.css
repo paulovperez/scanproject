@@ -220,15 +220,6 @@ svg { display: block; }
 
 #btn-start { margin-top: 22px; }
 
-.hint {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 12px;
-  font-size: 13px;
-  color: var(--gray-500);
-}
-.hint svg { width: 16px; height: 16px; color: var(--orange-ink); }
 
 .best {
   display: flex;

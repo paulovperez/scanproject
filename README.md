@@ -1,4 +1,4 @@
-# Intraoral Scanner Challenge
+# Scan Experience
 
 Jogo web mobile para apresentação comercial de scanner intraoral. O participante lê um QR Code, abre o jogo no navegador do celular, configura o paciente e tenta escanear as arcadas superior e inferior e a mordida dos dois lados em menos de 190 segundos.
 
