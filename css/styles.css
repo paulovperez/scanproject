@@ -944,7 +944,11 @@ svg { display: block; }
 }
 .mode-switch button svg { width: 16px; height: 16px; flex: none; }
 @media (max-width: 420px) {
-  .mode-switch button { font-size: 11px; letter-spacing: 0.04em; gap: 4px; }
+  /* Narrow phones: smaller icon buttons leave room for the longer SCAN/ROTATE labels of
+     pt-BR/es ("ESCANEAR / GIRAR") and fr ("SCANNER / PIVOTER"); each label sizes to its text. */
+  .dock .view-tools { gap: 4px; }
+  .dock .view-tools .tool-btn { width: 38px; height: 38px; }
+  .mode-switch button { flex: 1 1 auto; padding: 0 6px; font-size: 10px; letter-spacing: 0.02em; gap: 4px; }
   .mode-switch button svg { display: none; }
 }
 .mode-switch button[aria-checked="true"] { background: var(--white); color: var(--orange-ink); box-shadow: 0 1px 4px rgba(29, 33, 39, 0.12); }
