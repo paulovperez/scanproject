@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Intraoral Scanner Challenge — how fast can you scan? An interactive intraoral scanning simulation.">
+  <meta name="format-detection" content="telephone=no">
+  <meta property="og:title" content="Intraoral Scanner Challenge">
+  <meta property="og:description" content="How fast can you scan?">
+  <title>Intraoral Scanner Challenge</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ============ START ============ -->
+  <section id="screen-home" class="screen screen--home is-active" aria-labelledby="home-title">
+    <div class="home">
+      <div class="lang-picker" id="lang-picker" role="radiogroup" data-i18n-aria="language"></div>
+      <div class="brand">
+        <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 3C4.5 3 3 5 3 7.6c0 2.2.9 3.6 1.6 5.4.6 1.7.8 3.6 1.4 5.6.4 1.4 1 2.4 1.9 2.4 1.5 0 1.6-2.4 2.1-4.2.3-1.1.8-1.9 2-1.9s1.7.8 2 1.9c.5 1.8.6 4.2 2.1 4.2.9 0 1.5-1 1.9-2.4.6-2 .8-3.900 1.4-5.6.7-1.8 1.6-3.2 1.6-5.4C21 5 19.5 3 17 3c-2 0-3 1-5 1S9 3 7 3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M5 9.5h14M7.5 6l3 6.5M16.5 6l-3 6.5" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"/>
+        </svg>
+        <span data-i18n="brand"></span>
+      </div>
+
+      <div class="hero" aria-hidden="true">
+        <div class="hero__halo"></div>
+        <div class="hero__plane" id="home-plane">
+          <canvas id="home-canvas"></canvas>
+        </div>
+        <svg class="hero__wand" id="home-wand" viewBox="0 0 80 260">
+          <defs>
+            <linearGradient id="wandBody" x1="0" x2="1">
+              <stop offset="0" stop-color="#5A616B"/>
+              <stop offset=".45" stop-color="#2A2F36"/>
+              <stop offset="1" stop-color="#4A5059"/>
+            </linearGradient>
+            <linearGradient id="wandBeam" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FF6A13" stop-opacity=".55"/>
+              <stop offset="1" stop-color="#FF6A13" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <polygon class="wand-beam" points="33,188 47,188 68,258 12,258" fill="url(#wandBeam)"/>
+          <rect x="22" y="0" width="36" height="128" rx="18" fill="url(#wandBody)"/>
+          <rect x="22" y="80" width="36" height="6" fill="#FF6A13"/>
+          <rect x="29" y="12" width="4" height="100" rx="2" fill="#fff" opacity=".22"/>
+          <circle cx="40" cy="44" r="4.5" fill="#FF6A13"/>
+          <path d="M25 124 L55 124 L50 160 L30 160 Z" fill="url(#wandBody)"/>
+          <rect x="29" y="156" width="22" height="36" rx="8" fill="url(#wandBody)"/>
+          <rect x="33" y="182" width="14" height="7" rx="2.5" fill="#FFB283"/>
+        </svg>
+      </div>
+
+      <h1 class="title" id="home-title">
+        <span data-i18n="titleLine1"></span>
+        <span class="title__accent" data-i18n="titleLine2"></span>
+        <span data-i18n="titleLine3"></span>
+      </h1>
+      <p class="subtitle" data-i18n="subtitle"></p>
+
+      <button class="btn btn--primary" id="btn-start" type="button">
+        <span data-i18n="start"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <p class="hint">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 9v4l2.5 2M9.5 2.5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span data-i18n="limitHint"></span>
+      </p>
+
+      <div class="best">
+        <span class="best__label" data-i18n="personalBest"></span>
+        <span class="best__value" id="home-best-value"></span>
+      </div>
+
+      <p class="footnote" data-i18n="homeFooter"></p>
+    </div>
+  </section>
+
+  <!-- ============ PATIENT SETUP ============ -->
+  <section id="screen-setup" class="screen screen--setup" aria-labelledby="setup-title">
+    <header class="setup__head">
+      <button class="icon-btn" id="btn-setup-back" type="button" data-i18n-aria="setupBack">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <h2 class="setup__title" id="setup-title" data-i18n="setupTitle"></h2>
+    </header>
+
+    <div class="setup__body">
+      <div class="field">
+        <p class="field__label" id="lbl-type" data-i18n="patientType"></p>
+        <div class="seg-control" id="patient-type" role="radiogroup" aria-labelledby="lbl-type">
+          <button type="button" role="radio" data-value="adult">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 21c0-4 3-7 7-7s7 3 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span data-i18n="adultPatient"></span>
+          </button>
+          <button type="button" role="radio" data-value="pediatric">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 21c0-3 2.2-5.5 5-5.5s5 2.5 5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span data-i18n="pediatricPatient"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <p class="field__label"><span id="lbl-shade" data-i18n="toothShade"></span> · <span class="field__value" id="shade-name"></span></p>
+        <div class="swatches" id="shade-swatches" role="radiogroup" aria-labelledby="lbl-shade"></div>
+      </div>
+
+      <div class="field">
+        <p class="field__label" id="lbl-time" data-i18n="timeLimitLabel"></p>
+        <div class="seg-control seg-control--small" id="time-mode" role="radiogroup" aria-labelledby="lbl-time">
+          <button type="button" role="radio" data-value="190">190 s</button>
+          <button type="button" role="radio" data-value="120">120 s</button>
+          <button type="button" role="radio" data-value="60">60 s</button>
+          <button type="button" role="radio" data-value="custom" data-i18n="timeCustom"></button>
+          <button type="button" role="radio" data-value="none" data-i18n="timeNone"></button>
+        </div>
+        <label class="custom-time" id="custom-time" hidden>
+          <span data-i18n="customSeconds"></span>
+          <input type="number" id="custom-seconds" min="10" max="3600" step="5" inputmode="numeric">
+        </label>
+      </div>
+
+      <div class="field field--viewer">
+        <div class="field__row">
+          <p class="field__label"><span data-i18n="teeth"></span> · <span class="field__value" id="removed-count"></span></p>
+          <div class="seg-control seg-control--small" id="setup-arch" role="radiogroup">
+            <button type="button" role="radio" data-value="upper" data-i18n="archUpperShort"></button>
+            <button type="button" role="radio" data-value="lower" data-i18n="archLowerShort"></button>
+          </div>
+        </div>
+        <div class="viewer" id="setup-viewer">
+          <canvas class="overlay" id="setup-overlay"></canvas>
+          <div class="view-tools view-tools--float">
+            <button class="tool-btn" type="button" data-action="zoom-out" data-i18n-aria="zoomOut"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+            <button class="tool-btn" type="button" data-action="zoom-in" data-i18n-aria="zoomIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+            <button class="tool-btn" type="button" data-action="recenter" data-i18n-aria="recenter"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+          </div>
+          <p class="viewer__msg" id="viewer-msg" hidden></p>
+          <p class="viewer__hint" data-i18n="viewerHint"></p>
+        </div>
+        <div class="tooth-sheet" id="tooth-sheet">
+          <div class="tooth-sheet__info">
+            <p class="tooth-sheet__name" id="tooth-name"></p>
+            <p class="tooth-sheet__meta" id="tooth-meta"></p>
+          </div>
+          <button class="btn btn--small" id="btn-tooth-toggle" type="button" hidden></button>
+        </div>
+        <button class="link-btn" id="btn-restore-all" type="button" data-i18n="restoreAll"></button>
+      </div>
+    </div>
+
+    <footer class="setup__foot">
+      <button class="btn btn--primary" id="btn-setup-start" type="button">
+        <span data-i18n="start"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </footer>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section id="screen-game" class="screen screen--game" aria-label="Scanning">
+    <header class="hud">
+      <div class="hud__top">
+        <div class="timer" id="timer" role="timer" aria-live="off">
+          <span class="hud__label" data-i18n="time"></span>
+          <span class="timer__value"><span id="timer-main">00:00</span><span class="timer__tenths" id="timer-tenths">.0</span></span>
+          <span class="timer__limit" id="timer-limit"></span>
+        </div>
+        <div class="arch-badge">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18c0-8 3.6-13 8-13s8 5 8 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          <span id="arch-label"></span>
+          <span class="arch-badge__step" id="arch-step"></span>
+        </div>
+        <button class="btn-finish" id="btn-finish" type="button" data-i18n="finishScan"></button>
+        <button class="icon-btn" id="btn-quit" type="button" data-i18n-aria="quit">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="progress">
+        <div class="progress__row">
+          <span class="hud__label" data-i18n="progress"></span>
+          <span class="progress__pct" id="progress-pct">0%</span>
+        </div>
+        <div class="progress__bar" id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress__fill" id="progress-fill"></div>
+        </div>
+        <div class="segments" id="segments" aria-hidden="true"></div>
+      </div>
+    </header>
+
+    <div class="stage-split">
+    <div class="stage" id="stage">
+      <canvas class="overlay" id="game-overlay"></canvas>
+      <p class="stage__title" data-i18n="panelOriginal"></p>
+      <div class="stage__tag stage__tag--tl"><i class="live-dot"></i><span data-i18n="liveCapture"></span></div>
+      <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
+      <span class="corner corner--bl"></span><span class="corner corner--br"></span>
+
+      <div class="bite-status" id="bite-status">
+        <span class="bite-chip" id="bite-chip-r"><i></i><span data-i18n="biteChipRight"></span></span>
+        <span class="bite-chip" id="bite-chip-l"><i></i><span data-i18n="biteChipLeft"></span></span>
+      </div>
+
+      <div class="legend" id="legend" aria-hidden="true">
+        <p class="legend__title" data-i18n="legendTitle"></p>
+        <ul class="legend__items">
+          <li><i style="background:#22A04F"></i><span data-i18n="legend.excellent"></span></li>
+          <li><i style="background:#8FCC52"></i><span data-i18n="legend.veryGood"></span></li>
+          <li><i style="background:#FACC2E"></i><span data-i18n="legend.fair"></span></li>
+          <li><i style="background:#F57D1A"></i><span data-i18n="legend.low"></span></li>
+          <li><i style="background:#DB332B"></i><span data-i18n="legend.rescan"></span></li>
+          <li><i style="background:#BDC2C9"></i><span data-i18n="legend.none"></span></li>
+        </ul>
+        <p class="legend__note" data-i18n="legendNote"></p>
+      </div>
+
+      <div class="coach" id="coach">
+        <div class="coach__icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><circle class="coach__ring" cx="24" cy="14" r="9" fill="none" stroke="#FF6A13" stroke-width="2.5"/><path class="coach__finger" d="M20 44c-3-4-6-8-6-12 0-2 2-3 3.5-1.5L20 33V22a2 2 0 014 0v7l7 1.5c2 .5 3 2 2.8 4L33 44" fill="#fff" stroke="#1D2127" stroke-width="2" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <p class="coach__title" data-i18n="coachTitle"></p>
+          <p class="coach__text" data-i18n="coachText"></p>
+          <p class="coach__cta" data-i18n="coachStart"></p>
+        </div>
+      </div>
+
+      <div class="banner" id="banner" role="status">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#FF6A13"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p class="banner__title" id="banner-title"></p>
+        <p class="banner__text" id="banner-text"></p>
+      </div>
+    </div>
+
+    <!-- Digital model built only from the surfaces actually captured. Its own camera: rotating or
+         zooming it never moves the scanner. -->
+    <div class="stage stage--result" id="result-stage">
+      <p class="stage__title" data-i18n="panelResult"></p>
+      <!-- Magnified view of the spot the scanner aims at (display only: no input, no capture). -->
+      <div class="zoom-view" id="zoom-view" aria-hidden="true">
+        <span class="zoom-view__title" data-i18n="zoomTitle"></span>
+        <p class="zoom-view__empty" id="zoom-empty" data-i18n="noSurface"></p>
+      </div>
+      <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
+      <span class="corner corner--bl"></span><span class="corner corner--br"></span>
+      <p class="result-empty" id="result-empty" data-i18n="resultEmpty"></p>
+      <button class="tool-btn result-sync" id="btn-result-sync" type="button" aria-pressed="true" data-i18n-aria="resultSync">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 005.66 0l3-3a4 4 0 00-5.66-5.66l-1 1M14 10a4 4 0 00-5.66 0l-3 3a4 4 0 005.66 5.66l1-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    </div>
+
+    <footer class="dock">
+      <div class="view-tools">
+        <div class="mode-switch" role="radiogroup" data-i18n-aria="modeLabel">
+          <button type="button" role="radio" id="mode-scan">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
+            <span data-i18n="modeScan"></span>
+          </button>
+          <button type="button" role="radio" id="mode-rotate">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 11-2.3-5.7M20 4v4h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="modeRotate"></span>
+          </button>
+        </div>
+        <button class="tool-btn" id="btn-heat" type="button" aria-pressed="false" data-i18n-aria="qualityMap">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="4" height="16" rx="1.5" fill="#22A04F"/><rect x="10" y="4" width="4" height="16" rx="1.5" fill="#FACC2E"/><rect x="17" y="4" width="4" height="16" rx="1.5" fill="#DB332B"/></svg>
+        </button>
+        <button class="tool-btn" id="btn-next-view" type="button" data-i18n-aria="nextView">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 8.5l-2.2 4.8-4.8 2.2 2.2-4.8z" fill="#FF6A13" stroke="#FF6A13" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="tool-btn" type="button" data-action="zoom-out" data-i18n-aria="zoomOut"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+        <button class="tool-btn" type="button" data-action="zoom-in" data-i18n-aria="zoomIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+        <button class="tool-btn" type="button" data-action="recenter" data-i18n-aria="recenter"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+      </div>
+      <div class="face-strip" id="face-strip" aria-live="off"></div>
+      <div class="region-pill" id="region-pill">
+        <i class="region-pill__dot"></i>
+        <span class="region-pill__state" id="region-state"></span>
+        <span class="region-pill__name" id="region-name"></span>
+        <span class="region-pill__pct" id="region-pct"></span>
+      </div>
+      <p class="instruction" id="instruction" aria-live="polite"></p>
+    </footer>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section id="screen-result" class="screen screen--result" aria-labelledby="result-title">
+    <div class="result" id="result">
+      <div class="ring">
+        <span class="ring__pulse"></span><span class="ring__pulse ring__pulse--2"></span>
+        <svg viewBox="0 0 160 160" aria-hidden="true">
+          <circle class="ring__track" cx="80" cy="80" r="70"/>
+          <circle class="ring__bar" id="ring-bar" cx="80" cy="80" r="70"/>
+        </svg>
+        <div class="ring__center">
+          <span class="ring__pct" id="ring-pct">0%</span>
+          <span class="ring__label" data-i18n="scanned"></span>
+        </div>
+        <span class="ring__check" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </div>
+
+      <h2 class="result__title" id="result-title"></h2>
+      <p class="result__tagline" id="result-tagline"></p>
+
+      <div class="badge-new" id="badge-new">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z" fill="currentColor"/></svg>
+        <span data-i18n="newBest"></span>
+      </div>
+
+      <!-- The digital model as captured: incomplete where nothing was scanned. -->
+      <div class="result-model" id="result-model">
+        <p class="result-model__title" data-i18n="resultModelTitle"></p>
+        <p class="result-model__empty" id="result-model-empty" data-i18n="resultModelEmpty"></p>
+      </div>
+
+      <dl class="stats" id="stats">
+        <div class="stat stat--main"><dt class="stat__label"></dt><dd class="stat__value"></dd></div>
+        <div class="stat"><dt class="stat__label"></dt><dd class="stat__value"></dd></div>
+        <div class="stat"><dt class="stat__label"></dt><dd class="stat__value"></dd></div>
+        <div class="stat"><dt class="stat__label"></dt><dd class="stat__value"></dd></div>
+      </dl>
+
+      <button class="btn btn--primary" id="btn-continue" type="button" data-i18n="continueScanning" hidden></button>
+      <button class="btn btn--primary" id="btn-again" type="button"></button>
+      <div class="result__links">
+        <button class="btn btn--ghost" id="btn-change" type="button" data-i18n="changePatient"></button>
+        <button class="btn btn--ghost" id="btn-home" type="button" data-i18n="backHome"></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="js/strings.js"></script>
+  <script src="js/arch.js"></script>
+  <script src="js/capture.js"></script>
+  <script src="js/gl.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
