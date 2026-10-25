@@ -14,6 +14,8 @@
   const ZOOM_MIN = 0.65, ZOOM_MAX = 2.8;
   const MAX_DPR = 2;
   const IDENTITY = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  // Identity of a set of removed teeth by content (the set is edited in place by the setup screen).
+  const removedKey = (s) => (s && s.size ? [...s].sort().join(',') : '');
 
   const VS = `
 attribute vec3 aPos;
@@ -311,6 +313,8 @@ void main() {
 
     buffers(model) {
       let g = this.gpu.get(model);
+      // Each view (main, SCAN RESULT, zoom) keeps its own copy: follow the current removals.
+      if (g && g.removedKey !== removedKey(model.removedSet)) this.setRemoved(model, model.removedSet || new Set());
       if (g || !this.ok) return g;
       const gl = this.gl, mk = (target, data, usage) => {
         const b = gl.createBuffer();
@@ -335,6 +339,7 @@ void main() {
       model.removedSet = removed;
       const g = this.gpu.get(model);
       if (!g) return;
+      g.removedKey = removedKey(removed);
       const gl = this.gl, tri = [], lines = [];
       model.teeth.forEach((t) => {
         if (removed.has(t.id)) return;

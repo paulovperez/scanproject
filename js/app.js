@@ -268,7 +268,7 @@
       const m = dentModels()[a];
       m.teeth.forEach((t) => { t.removed = removedSet().has(t.id); });
       m.removedSet = removedSet();
-      [renderer, resultView].forEach((r) => { if (r.gpu.get(m)) r.setRemoved(m, removedSet()); });
+      [renderer, resultView, zoomView].forEach((r) => { if (r.gpu.get(m)) r.setRemoved(m, removedSet()); });
     });
   }
 
